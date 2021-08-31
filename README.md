@@ -1,2 +1,2 @@
-# zeus
+# Zeus
 Bittensor Network Explorer
