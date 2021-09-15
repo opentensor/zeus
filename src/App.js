@@ -1,6 +1,5 @@
-import logo from './bittensor-logo.png';
 import './App.css';
-import WsComponent from './WsComponent';
+import SocketData from './SocketData';
 import Tables from './Tables';
 import Stakes from './Stakes';
 import NetworkGraph from './NetworkGraph';
@@ -10,7 +9,7 @@ function App() {
   return (
     <div className="App">
       <div id="content"style={{marginTop: '80px'}}>
-        <WsComponent />
+        <SocketData />
         <div>
           <h1 style={{marginBottom: '50px', paddingBottom: '10px'}}>Zeus (Bittensor Network Explorer)</h1>
           <Tables />
