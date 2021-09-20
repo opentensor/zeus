@@ -30,6 +30,12 @@ $.DataTable = require('datatables.net');
 
 
 class Tables extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          data: this.props.data
+        }
+    }
     componentDidMount() {
       const columns = [
           {
@@ -42,8 +48,13 @@ class Tables extends React.Component {
               width: 180,
               data: 'stake'
           },
+          {
+              title: 'Rank',
+              width: 180,
+              data: 'rank'
+          }
       ];
-      const data = [{uid: 0, stake: 0}, {uid: 1, stake: 4}, {uid: 2, stake: 9}, {uid: 3, stake: 7}, {uid: 4, stake: 15}, {uid: 5, stake: 10}, {uid: 6, stake: 0}, {uid: 7, stake: 8}, {uid: 8, stake: 12}, {uid: 9, stake: 0}, {uid: 10, stake: 2}];
+      const data = this.state.data;
         this.$el = $(this.el);
         this.$el.DataTable({
            dom: "fltip",
@@ -52,7 +63,7 @@ class Tables extends React.Component {
            ordering: true,
            paging: true,
            columnDefs: [
-                { "targets": [1], "searchable": false }
+                { "targets": [1,2], "searchable": false }
             ],
             oLanguage: {
                "sSearch": "Search by uid of peer: "

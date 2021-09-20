@@ -1,46 +1,59 @@
 import React from "react";
 import io from 'socket.io-client';
+import Tables from './Tables';
+import Stakes from './Stakes';
+import NetworkGraph from './NetworkGraph';
 
 class SocketData extends React.Component {
-    state = {
-        socketData: "",
-        socketStatus:"On"
-    }
-    componentWillUnmount() {
-        this.socket.close()
-        console.log("component unmounted")
+  constructor(props) {
+      super(props);
+      this.state = {
+        connected: "",
+        stakeVal: [],
+        rankVal: [],
+        dataVal: [],
+        uidVal: []
+      }
     }
     componentDidMount() {
         var sensorEndpoint = "http://204.48.29.198:5000"
-            this.socket = io.connect(sensorEndpoint, {
-            reconnection: true,
-            // transports: ['websocket']
+        this.socket = io.connect(sensorEndpoint, {
+        reconnection: true
         });
         console.log("component mounted")
-        this.socket.on("responseMessage", message => {
-            this.setState({'socketData': message.stake})
-
-            console.log("responseMessage", message)
+        this.socket.on("response", msg => {
+            this.setState({'connected': msg.data})
+            console.log("connection succeeded")
         })
+        this.socket.emit("stake", msg => {
+          console.log(msg)
+        });
 
-    }
-    handleEmit=()=>{
-        if(this.state.socketStatus==="On"){
-        this.socket.emit("message", {'data':'Stop Sending', 'status':'Off'})
-        this.setState({'socketStatus':"Off"})
-    }
-    else{
-        this.socket.emit("message", {'data':'Start Sending', 'status':'On'})
-        this.setState({'socketStatus':"On"})
+        
+        let ranks = this.socket.on("rank", this.rank);
+        if (ranks){
+          console.log(ranks)
         }
-        console.log("Emit Clicked")
+        this.setState({'ranks' : ranks})
+
     }
     render() {
         return (
             <React.Fragment>
-            <div>Data: {this.state.socketData}</div>
-            <div>Status: {this.state.socketStatus}</div>
-            <div onClick={this.handleEmit}> Start/Stop</div>
+          <div>
+            <Tables data={this.state.data}/>
+            <br/>
+          </div>
+          <hr/>
+          <div>
+            <Stakes rank={this.state.rankVal} uid={this.state.uidVal} stake={this.state.stakeVal}/>
+            <br/>
+          </div>
+          <hr/>
+          <div>
+            <NetworkGraph />
+            <br/>
+          </div>
             </React.Fragment>
         )
     }

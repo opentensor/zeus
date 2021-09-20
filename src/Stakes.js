@@ -1,58 +1,66 @@
 import React from 'react';
-import Highcharts from "highcharts";
-import highcharts3d from "highcharts/highcharts-3d";
-import cylinder from "highcharts/modules/cylinder";
-
-highcharts3d(Highcharts);
-cylinder(Highcharts);
+var Highcharts = require('highcharts');
+require('highcharts/modules/accessibility')(Highcharts);
+require('highcharts/modules/series-label')(Highcharts);
+require('highcharts/modules/exporting')(Highcharts);
+require('highcharts/modules/export-data')(Highcharts);
 
 class Stakes extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          series: [{
-              data: [0, 4, 9, 7, 15, 10, 0, 8, 12, 0, 2],
-              name: 'Stakes',
-              showInLegend: false
-          }]
+          uids: this.props.uid,
+          ranks: this.props.rank,
+          stakes: this.props.stake
         }
     }
 
     highChartsRender() {
         Highcharts.chart({
-          chart: {
-              type: 'cylinder',
-              options3d: {
-                  enabled: true,
-                  alpha: 15,
-                  beta: 15,
-                  depth: 50,
-                  viewDistance: 25
-              },
-              renderTo: 'stakes-cylinder-graph'
-          },
-          credits: false,
-          title: {
-              text: 'Bittensor Stake Per Uid'
-          },
-          xAxis: {
-            title: {
-              text: "Uid",
+            chart: {
+                type: 'column',
+                renderTo: 'stakes-column-graph'
             },
-          },
+            title: {
+                text: 'Stakes and Ranks For Peers'
+            },
+            xAxis: {
+              categories: this.state.uids
+                ,
+                crosshair: true,
+                title: {
+                    text: 'Uid'
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Amount'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Stake',
+                data: this.state.stakes
 
-          yAxis: {
-            title: {
-              text: "Stake",
-            },
-          },
-          plotOptions: {
-              series: {
-                  depth: 25,
-                  colorByPoint: true
-              }
-          },
-            series: this.state.series
+            }, {
+                name: 'Rank',
+                data: this.state.ranks
+
+            }]
         });
     }
 
@@ -62,7 +70,7 @@ class Stakes extends React.Component {
 
    	render() {
        	return (
-            <div id="stakes-cylinder-graph">
+            <div id="stakes-column-graph">
             </div>
        	);
    	}
