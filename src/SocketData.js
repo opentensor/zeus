@@ -20,21 +20,20 @@ class SocketData extends React.Component {
         this.socket = io.connect(sensorEndpoint, {
         reconnection: true
         });
+
         console.log("component mounted")
+
         this.socket.on("response", msg => {
             this.setState({'connected': msg.data})
             console.log("connection succeeded")
-        })
-        this.socket.emit("stake", msg => {
-          console.log(msg)
-        });
 
-        
-        let ranks = this.socket.on("rank", this.rank);
-        if (ranks){
-          console.log(ranks)
-        }
-        this.setState({'ranks' : ranks})
+            this.socket.emit("stake")
+            
+            this.socket.on("stakeResponse", msg => {
+              console.log(msg)
+            })
+
+        })
 
     }
     render() {
