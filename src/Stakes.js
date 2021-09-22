@@ -6,21 +6,26 @@ require('highcharts/modules/exporting')(Highcharts);
 require('highcharts/modules/export-data')(Highcharts);
 
 class Stakes extends React.Component {
+
+    static getDerivedStateFromProps(props, state) {
+      return {"uids" : props.uid, "ranks" : props.rank, "stakes" : props.stake};
+    }
     constructor(props) {
         super(props);
         this.state = {
-          uids: this.props.uid,
-          ranks: this.props.rank,
-          stakes: this.props.stake
+          uids: [],
+          ranks: [],
+          stakes: []
         }
     }
 
-    highChartsRender() {
+    highChartsRender(state) {
         Highcharts.chart({
             chart: {
                 type: 'column',
                 renderTo: 'stakes-column-graph'
             },
+            credits: false,
             title: {
                 text: 'Stakes and Ranks For Peers'
             },
@@ -39,9 +44,9 @@ class Stakes extends React.Component {
                 }
             },
             tooltip: {
-                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                headerFormat: '<span style="font-size:10px">UID: {point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    '<td style="padding:0"><b>{point.y} </b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true
@@ -65,10 +70,23 @@ class Stakes extends React.Component {
     }
 
     componentDidMount() {
+        console.log("Mounted")
         this.highChartsRender();
     }
 
+    getSnapshotBeforeUpdate(prevProps, prevState){
+      if (this.state.uids !== prevState.uids) {
+
+      }
+      return null
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+      console.log("Updated");
+    }
+
    	render() {
+      console.log("Rendered")
+      console.log(this.state.stakes)
        	return (
             <div id="stakes-column-graph">
             </div>

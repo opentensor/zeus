@@ -12,7 +12,7 @@ class SocketData extends React.Component {
         stakeVal: [],
         rankVal: [],
         dataVal: [],
-        uidVal: []
+        uidVal: [],
       }
     }
     componentDidMount() {
@@ -27,20 +27,37 @@ class SocketData extends React.Component {
             this.setState({'connected': msg.data})
             console.log("connection succeeded")
 
-            this.socket.emit("stake")
-            
+            this.socket.emit("stake");
+            let uidArray = [],
+                stakeArray = [],
+                rankArray = [],
+                dataArray = [];
             this.socket.on("stakeResponse", msg => {
-              console.log(msg)
-            })
+              for (let [key, value] of Object.entries(msg)) {
+                uidArray.push(key)
+                stakeArray.push(value);
+              }
+            });
+            this.setState({"stakeVal" : stakeArray, "uidVal" : uidArray});
+
+
+
+            this.socket.emit("rank");
+            this.socket.on("rankResponse", msg => {
+              for (let [key, value] of Object.entries(msg)) {
+                rankArray.push(value);
+                dataArray.push({uid: this.state.uidVal[key], stake: this.state.stakeVal[key], rank: value})
+              }
+            });
+            this.setState({"rankVal" : rankArray, "dataVal" : dataArray});
 
         })
-
     }
     render() {
         return (
             <React.Fragment>
           <div>
-            <Tables data={this.state.data}/>
+            <Tables data = {this.state.dataVal}/>
             <br/>
           </div>
           <hr/>

@@ -28,14 +28,23 @@ const Styles = styled.div `
 const $ = require('jquery');
 $.DataTable = require('datatables.net');
 
-
 class Tables extends React.Component {
+      static getDerivedStateFromProps(props, state) {
+        return {"data" : props.data};
+      }
     constructor(props) {
         super(props);
         this.state = {
-          data: this.props.data
+          data: props.data
         }
     }
+    componentDidUpdate(prevProps){
+     if(this.props.data !== prevProps.data){
+      this.setState({
+        "data": this.props.data
+        });
+       }
+     }
     componentDidMount() {
       const columns = [
           {
